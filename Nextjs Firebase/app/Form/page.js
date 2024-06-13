@@ -17,6 +17,9 @@ const Form = () => {
 
         try {
             const collectionRef = collection(db, "abc");
+
+            
+
             await addDoc(collectionRef, student);
             console.log("Document written with ID: ");
         } catch (e) {
