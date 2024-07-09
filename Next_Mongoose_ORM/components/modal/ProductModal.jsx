@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import styles from '../../styles/products.module.css';
 
-const ProductModal = ({ isOpen, onClose, title }) => {
+const ProductModal = ({ isOpen, onClose, title, isUpdate }) => {
     const [form, setForm] = useState({
         title: '',
         price: '',
@@ -21,12 +21,11 @@ const ProductModal = ({ isOpen, onClose, title }) => {
 
     const submitHandler = async (e) => {
         e.preventDefault();
-       if (isUpdate) {
-        
-       }
-       else{
-        postProductApi()
-       }
+        if (isUpdate) {
+            updateProductApi();
+        } else {
+            postProductApi();
+        }
     };
 
     const postProductApi = async () => {
@@ -45,7 +44,41 @@ const ProductModal = ({ isOpen, onClose, title }) => {
             };
 
             const response = await fetch("http://localhost:3000/api/products", requestOptions);
-            alert("Product created");
+            if (response.ok) {
+                alert("Product created");
+                onClose();
+            } else {
+                alert("Failed to create product");
+            }
+        } catch (error) {
+            console.log("error", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const updateProductApi = async () => {
+        try {
+            setLoading(true);
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            const raw = JSON.stringify(form);
+
+            const requestOptions = {
+                method: "PUT", // assuming a PUT request for update
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+            };
+
+            const response = await fetch(`http://localhost:3000/api/products/${form.id}`, requestOptions);
+            if (response.ok) {
+                alert("Product updated");
+                onClose();
+            } else {
+                alert("Failed to update product");
+            }
         } catch (error) {
             console.log("error", error);
         } finally {
@@ -59,7 +92,7 @@ const ProductModal = ({ isOpen, onClose, title }) => {
         <div className={styles.modal}>
             <div className={styles.modalContent}>
                 <span className={styles.close} onClick={onClose}>&times;</span>
-                <h2>{isUpdate ? "Update Products" : "Add Products"}</h2>
+                <h2>{isUpdate ? "Update Product" : "Add Product"}</h2>
                 <form onSubmit={submitHandler}>
                     <div className={styles.formGroup}>
                         <label htmlFor="title">Product Title:</label>
