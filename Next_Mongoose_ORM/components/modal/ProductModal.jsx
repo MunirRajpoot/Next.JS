@@ -1,12 +1,12 @@
-// components/ProductModal.js
-import { useState } from 'react';
-import styles from '../../styles/products.module.css';
+// components/modal/ProductModal.js
+import React, { useState } from 'react';
+import styles from '../../styles/products.module.css'; // Adjust path if needed
 
-const ProductModal = ({ isOpen, onClose, title, isUpdate }) => {
+const ProductModal = ({ isOpen, onClose, title, isUpdate, product }) => {
     const [form, setForm] = useState({
-        title: '',
-        price: '',
-        description: ''
+        title: product?.title || '',
+        price: product?.price || '',
+        description: product?.description || ''
     });
 
     const [loading, setLoading] = useState(false);
@@ -31,19 +31,13 @@ const ProductModal = ({ isOpen, onClose, title, isUpdate }) => {
     const postProductApi = async () => {
         try {
             setLoading(true);
-            const myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-
-            const raw = JSON.stringify(form);
-
-            const requestOptions = {
+            const response = await fetch("http://localhost:3000/api/products", {
                 method: "POST",
-                headers: myHeaders,
-                body: raw,
-                redirect: "follow"
-            };
-
-            const response = await fetch("http://localhost:3000/api/products", requestOptions);
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(form)
+            });
             if (response.ok) {
                 alert("Product created");
                 onClose();
@@ -60,19 +54,13 @@ const ProductModal = ({ isOpen, onClose, title, isUpdate }) => {
     const updateProductApi = async () => {
         try {
             setLoading(true);
-            const myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
-
-            const raw = JSON.stringify(form);
-
-            const requestOptions = {
-                method: "PUT", // assuming a PUT request for update
-                headers: myHeaders,
-                body: raw,
-                redirect: "follow"
-            };
-
-            const response = await fetch(`http://localhost:3000/api/products/${form.id}`, requestOptions);
+            const response = await fetch(`http://localhost:3000/api/products/${product._id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(form)
+            });
             if (response.ok) {
                 alert("Product updated");
                 onClose();
