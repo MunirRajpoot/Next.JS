@@ -5,10 +5,21 @@ dbConnect();
 
 const { Schema } = mongoose;
 
-const productsSchema = new Schema({
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    price: { type: Number, default: 0 }
-}, { timestamps: true });
+const productSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+  description: {
+    type: String,
+  },
+  // Add other fields as necessary
+}, { timestamps: true }); // Add timestamps for createdAt and updatedAt
 
-export const productModel = mongoose.models.Product || mongoose.model('Product', productsSchema);
+const Product = mongoose.models.Product || mongoose.model('Product', productSchema);
+
+export default Product;
